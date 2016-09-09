@@ -38,10 +38,7 @@ def read_words(filename):
             words.extend(line.lower().split())
     dic = {}
     for i in words:
-        if dic.get(i):
-            dic[i] = dic.get(i) + 1
-        else:
-            dic[i] = 1
+        dic[i] = dic.get(i, 0) + 1
     return list(dic.items())
 
 
@@ -51,16 +48,13 @@ def print_words(filename):
     for i in lst:
         print(i[0], " ", i[1])
 
-        
-def how_to_sort(i):
-    return i[1]
-
+    
 
 def print_top(filename):
     lst = read_words(filename)
-    lst.sort(key = how_to_sort)
+    lst.sort(key = lambda i: i[1])
     lst.reverse()
-    for i in lst:
+    for i in lst[:20]:
         print(i[0], " ", i[1])
 
 # Define print_words(filename) and print_top(filename) functions.

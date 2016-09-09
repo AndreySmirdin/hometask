@@ -43,7 +43,9 @@ def not_bad(s):
 # Example input: 'abcd', 'xy'
 # Example output: 'abxcdy'
 def front_back(a, b):
-    return a[:int(len(a) / 2 + 0.5)] + b[:int(len(b) / 2 + 0.5)] + a[int(len(a) / 2 + 0.5):] + b[int(len(b) / 2 + 0.5):]
+    len1 = (len(a) + 1) // 2
+    len2 = (len(b) + 1) // 2
+    return a[:len1] + b[:len2] + a[len1:] + b[len2:]
 
 
 
