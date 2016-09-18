@@ -70,7 +70,7 @@ def main():
     if len(sys.argv) != 3:
         print('usage: ./wordcount.py {--count | --topcount} file')
         sys.exit(1)
- 
+
     option = sys.argv[1]
     filename = sys.argv[2]
     if option == '--count':
