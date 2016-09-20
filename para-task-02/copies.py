@@ -18,11 +18,13 @@ def find_copies(dir):
 				hashed = read_and_hash(name)
 				if not(hashed in dic):
 					dic[hashed] = []
+				name = os.path.relpath(name, dir)
 				dic[hashed].append(name)
 	return dic
 
 def print_copies(hash_list):
 	for v in hash_list.values():
+		#print(hash_list.values())
 		if len(v) > 1:
 			print(':'.join(v))
 
