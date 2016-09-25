@@ -8,9 +8,9 @@ def read_matrix(n):
     return np.reshape(m, (n, n))
 
 
-def add_zeroes(m, n, size):
-    m = np.hstack((m, np.zeros((n, size - n), dtype=int)))
-    m = np.vstack((m, np.zeros((size - n, size), dtype=int)))
+def add_zeroes(m, size):
+    m = np.hstack((m, np.zeros((m.shape[0], size - m.shape[0]), dtype=int)))
+    m = np.vstack((m, np.zeros((size - m.shape[0], size), dtype=int)))
     return m
 
 
@@ -51,7 +51,7 @@ n = int(input())
 size = 1
 while size < n:
     size *= 2
-m1_zeroes = add_zeroes(read_matrix(n), n, size)
-m2_zeroes = add_zeroes(read_matrix(n), n, size)
+m1_zeroes = add_zeroes(read_matrix(n), size)
+m2_zeroes = add_zeroes(read_matrix(n), size)
 ans = mult(m1_zeroes, m2_zeroes)
 print_ans(ans[:n, :n])
