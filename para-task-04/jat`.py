@@ -98,7 +98,7 @@ class Conditional:
             for tr in self.if_true:
                 res = tr.evaluate(scope)
             return res
-        else:
+        elif self.if_false:
             for fal in self.if_false:
                 res = fal.evaluate(scope)
             return res
@@ -160,7 +160,7 @@ class Reference:
         self.name = name
 
     def evaluate(self, scope):
-        return scope.dic[self.name]
+        return scope[self.name]
 
 
 class BinaryOperation:
@@ -238,21 +238,16 @@ def my_test2(): #вычисление факториала
     scope = Scope()
     Read("n").evaluate(scope)
     scope["ans"] = Number(1)
-    cond = Conditional(BinaryOperation(Reference("n"), ">", Number(1)),
-            [FunctionCall(Reference("factorial"),[Reference(BinaryOperation(Reference("n"), "-", Number(1)))]), BinaryOperation(Reference("n"), '*', Reference("ans"))],
-            [])
-    func = Function("n", [cond])
+    cond = Conditional(BinaryOperation(Reference("a"), ">", Number(1)),
+            [FunctionCall(Reference("factorial"),[BinaryOperation(Reference("a"), "-", Number(1))])],
+            [Number(1)])
+    func = Function("a", [BinaryOperation(cond, "*", Reference("a"))])
     definition = FunctionDefinition("factorial", func)
-    answer = FunctionCall(definition, [Reference("n")])
-    p = Print(answer)
+    p = Print(FunctionCall(definition, [Reference("n")]))
     p.evaluate(scope)
+
+
 if __name__ == '__main__':
     #example()
+    #my_test(1)
     my_test2()
-    #print('Simple print')
-    #scope = Scope()
-    #n1 = Number(0)
-    #a = Read(n1)
-    #ans = UnaryOperation('-', a)
-    #p = Print(ans)
-    #p.evaluate(scope)
