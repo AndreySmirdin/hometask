@@ -100,15 +100,12 @@ class Conditional:
         cond = self.condition.evaluate(scope)
         res = Number(0)
         if cond.value:
-            if self.if_true:
-                for tr in self.if_true:
-                    res = tr.evaluate(scope)
-                return res
-            else:
-                return Number(0)
-        elif self.if_false:
-            for fal in self.if_false:
-                res = fal.evaluate(scope)
+            expr = self.if_true
+        else:
+            expr = self.if_false
+        if expr:
+            for term in expr:
+                res = term.evaluate(scope)
             return res
         else:
             return Number(0)
@@ -205,12 +202,9 @@ class BinaryOperation:
         self.rhs = rhs
 
     def evaluate(self, scope):
-        res = Number(
-            self.operation[
-                self.op](
-                self.lhs.evaluate(scope),
-                self.rhs.evaluate(scope)))
-        return res
+        left = self.lhs.evaluate(scope)
+        right = self.rhs.evaluate(scope)
+        return Number(self.operation[self.op](left, right))
 
 
 class UnaryOperation:
@@ -218,12 +212,12 @@ class UnaryOperation:
     """UnaryOperation - представляет унарную операцию над выражением.
     Результатом вычисления унарной операции является объект Number.
     Поддерживаемые операции: “-”, “!”."""
+    operation = {'-': lambda x: -x.value,
+                 '!': lambda x: int(not x.value)}
 
     def __init__(self, op, expr):
         self.op = op
         self.expr = expr
-        self.operation = {'-': lambda x: -x.value,
-                          '!': lambda x: int(not(x.value))}
 
     def evaluate(self, scope):
         return Number(self.operation[self.op](self.expr.evaluate(scope)))
@@ -245,7 +239,9 @@ def example():
                  [Number(5), UnaryOperation('-', Number(3))]).evaluate(scope)
 
 
-def my_test1():  # Положительное число возводится в квадрат, отрицательное в куб.
+def my_test1():  # Положительное число возводится в квадрат,
+                 # отрицательное в куб.
+    print("Введите число. Положительное будет возведено в квадрат, отрицательное в куб: ")
     scope = Scope()
     Read("n").evaluate(scope)
     ans = Conditional(
@@ -262,17 +258,17 @@ def my_test1():  # Положительное число возводится в
 
 def my_test2():  # Вычисление факториала.
     scope = Scope()
-    Read("n").evaluate(scope)
+    scope["n"] = Number(6)
     cond = Conditional(BinaryOperation(Reference("a"), ">", Number(1)), [FunctionCall(
         Reference("factorial"), [BinaryOperation(Reference("a"), "-", Number(1))])], [Number(1)])
     func = Function("a", [BinaryOperation(cond, "*", Reference("a"))])
-    definition = FunctionDefinition("factorial", func)
-    p = Print(FunctionCall(definition, [Reference("n")]))
-    p.evaluate(scope)
+    defin = FunctionDefinition("factorial", func)
+    assert FunctionCall(defin, [Reference("n")]).evaluate(scope).value == 720
 
 
 def my_test3():  # Поделим нацело нечетное число на 2. Если число четное,
-                # то т.к., значение if_false не указано, то результат это число 0.
+            # то т.к., значение if_false не указано, то результат это 0.
+    print("Введите нечетное число, оно будет поделено нацело на 2: ")
     scope = Scope()
     Read("n").evaluate(scope)
     cond = Conditional(
@@ -286,6 +282,7 @@ def my_test3():  # Поделим нацело нечетное число на 
 
 def my_test4():  # Тест scope`а. Результатом должно быть число 35,
                 # потому что значение а берется из parent, а b из child.
+    print("Результатом должно быть 35 ")
     parent = Scope()
     child = Scope(parent)
     parent["a"] = Number(30)
