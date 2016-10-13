@@ -103,9 +103,12 @@ class Conditional:
             expr = self.if_true
         else:
             expr = self.if_false
-        for term in expr:
-            res = term.evaluate(scope)
-        return res
+        if expr:
+            for term in expr:
+                res = term.evaluate(scope)
+            return res
+        else:
+            return Number(0)
 
 
 class Print:
