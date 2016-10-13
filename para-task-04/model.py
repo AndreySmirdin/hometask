@@ -301,6 +301,13 @@ def my_test5():  # Деление двух чисел, если делитель
                        [BinaryOperation(Reference("a"), "/", Reference("b"))])
     Print(cond).evaluate(scope)
 
+
+def my_test6():  # Еще один крайний случай Conditional.
+    scope = Scope()
+    cond = Conditional(Number(0), None, None)
+    Print(cond).evaluate(scope)
+
+
 if __name__ == '__main__':
     example()
     my_test1()
@@ -308,3 +315,4 @@ if __name__ == '__main__':
     my_test3()
     my_test4()
     my_test5()
+    my_test6()
