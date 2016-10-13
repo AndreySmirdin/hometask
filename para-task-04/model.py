@@ -240,18 +240,16 @@ def example():
 
 
 def my_test1():  # Положительное число возводится в квадрат,
-                 # отрицательное в куб.
-    print("Введите число. Положительное будет возведено в квадрат, отрицательное в куб: ")
+                # отрицательное в куб.
+    print("Введите число. Положительное будет возведено в квадрат,"
+          "отрицательное в куб: ")
     scope = Scope()
     Read("n").evaluate(scope)
-    ans = Conditional(
-        BinaryOperation(
-            Reference("n"), ">", Number(0)), [
-            BinaryOperation(
-                Reference("n"), '*', Reference("n"))], [
-                    BinaryOperation(
-                        BinaryOperation(
-                            Reference("n"), '*', Reference("n")), "*", Reference("n"))])
+    scope["sq"] = BinaryOperation(
+        Reference("n"), '*', Reference("n")).evaluate(scope)
+    ans = Conditional(BinaryOperation(Reference("n"), '>', Number(0)),
+                      [Reference("sq")],
+                      [BinaryOperation(Reference("sq"), '*', Reference("n"))])
     p = Print(ans)
     p.evaluate(scope)
 
@@ -260,13 +258,13 @@ def my_test2():  # Вычисление факториала.
     scope = Scope()
     scope["n"] = Number(6)
     cond = Conditional(BinaryOperation(Reference("a"), ">", Number(1)), [FunctionCall(
-        Reference("factorial"), [BinaryOperation(Reference("a"), "-", Number(1))])], [Number(1)])
+        Reference("f"), [BinaryOperation(Reference("a"), "-", Number(1))])], [Number(1)])
     func = Function("a", [BinaryOperation(cond, "*", Reference("a"))])
-    defin = FunctionDefinition("factorial", func)
+    defin = FunctionDefinition("f", func)
     assert FunctionCall(defin, [Reference("n")]).evaluate(scope).value == 720
 
 
-def my_test3():  # Поделим нацело нечетное число на 2. Если число четное,
+def my_test3():  # Поделим нацело нечетное число на 2. Если число четно
             # то т.к., значение if_false не указано, то результат это 0.
     print("Введите нечетное число, оно будет поделено нацело на 2: ")
     scope = Scope()
@@ -290,9 +288,21 @@ def my_test4():  # Тест scope`а. Результатом должно быт
     child["b"] = Number(5)
     Print(BinaryOperation(Reference("a"), "+", Reference("b"))).evaluate(child)
 
+
+def my_test5():  # Деление двух чисед, если делитель не 0.
+    print("Введите делимое и делитель ")
+    scope = Scope()
+    Read("a").evaluate(scope)
+    Read("b").evaluate(scope)
+    cond = Conditional(BinaryOperation(Reference("b"), "==", Number(0)),
+                       [],
+                       [BinaryOperation(Reference("a"), "/", Reference("b"))])
+    Print(cond).evaluate(scope)
+
 if __name__ == '__main__':
     example()
     my_test1()
     my_test2()
     my_test3()
     my_test4()
+    my_test5()
