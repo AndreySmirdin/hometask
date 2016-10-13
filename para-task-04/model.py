@@ -103,12 +103,9 @@ class Conditional:
             expr = self.if_true
         else:
             expr = self.if_false
-        if expr:
-            for term in expr:
-                res = term.evaluate(scope)
-            return res
-        else:
-            return Number(0)
+        for term in expr:
+            res = term.evaluate(scope)
+        return res
 
 
 class Print:
@@ -257,8 +254,10 @@ def my_test1():  # Положительное число возводится в
 def my_test2():  # Вычисление факториала.
     scope = Scope()
     scope["n"] = Number(6)
-    cond = Conditional(BinaryOperation(Reference("a"), ">", Number(1)), [FunctionCall(
-        Reference("f"), [BinaryOperation(Reference("a"), "-", Number(1))])], [Number(1)])
+    cond = Conditional(BinaryOperation(Reference("a"), ">", Number(1)), [
+                       FunctionCall(Reference("f"), [
+                          BinaryOperation(Reference("a"), "-", Number(1))])], [
+                       Number(1)])
     func = Function("a", [BinaryOperation(cond, "*", Reference("a"))])
     defin = FunctionDefinition("f", func)
     assert FunctionCall(defin, [Reference("n")]).evaluate(scope).value == 720
@@ -289,7 +288,7 @@ def my_test4():  # Тест scope`а. Результатом должно быт
     Print(BinaryOperation(Reference("a"), "+", Reference("b"))).evaluate(child)
 
 
-def my_test5():  # Деление двух чисед, если делитель не 0.
+def my_test5():  # Деление двух чисел, если делитель не 0.
     print("Введите делимое и делитель ")
     scope = Scope()
     Read("a").evaluate(scope)
