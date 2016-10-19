@@ -88,7 +88,7 @@ class FunctionDefinition:
         return self.function
 
     def accept(self, visitor):
-        return visitor.visit_functionDefinition(self)
+        return visitor.visit_function_definition(self)
 
 
 class Conditional:
@@ -178,7 +178,7 @@ class FunctionCall:
         return function.evaluate(call_scope)
 
     def accept(self, visitor):
-        return visitor.visit_functionCall(self)
+        return visitor.visit_function_call(self)
 
 
 class Reference:
@@ -228,7 +228,7 @@ class BinaryOperation:
         return Number(self.operation[self.op](left, right))
 
     def accept(self, visitor):
-        return visitor.visit_binaryOperation(self)
+        return visitor.visit_binary_operation(self)
 
 
 class UnaryOperation:
@@ -247,4 +247,4 @@ class UnaryOperation:
         return Number(self.operation[self.op](self.expr.evaluate(scope)))
 
     def accept(self, visitor):
-        return visitor.visit_unaryOperation(self)
+        return visitor.visit_unary_operation(self)

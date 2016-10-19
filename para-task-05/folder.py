@@ -20,7 +20,7 @@ class ConstantFolder:
     def visit_reference(self, reference):
         return reference
 
-    def visit_binaryOperation(self, binary):
+    def visit_binary_operation(self, binary):
         right = binary.rhs.accept(self)
         left = binary.lhs.accept(self)
         if binary.op == '*':
@@ -37,7 +37,7 @@ class ConstantFolder:
                 return Number(0)
         return BinaryOperation(left, binary.op, right)
 
-    def visit_unaryOperation(self, unary):
+    def visit_unary_operation(self, unary):
         expr = unary.expr.accept(self)
         if isinstance(expr, Number):
             return UnaryOperation(unary.op, expr).evaluate(None)
@@ -56,12 +56,12 @@ class ConstantFolder:
     def visit_read(self, read):
         return read
 
-    def visit_functionDefinition(self, defin):
+    def visit_function_definition(self, defin):
         body = self.visit_list(defin.function.body)
         function = Function(defin.function.args, body)
         return FunctionDefinition(defin.name, function)
 
-    def visit_functionCall(self, call):
+    def visit_function_call(self, call):
         new_args = self.visit_list(call.args)
         new_fun_expr = call.fun_expr.accept(self)
         return FunctionCall(new_fun_expr, new_args)

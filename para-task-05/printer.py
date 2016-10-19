@@ -24,14 +24,14 @@ class PrettyPrinter:
     def visit_reference(self, reference):
         print(reference.name, end='')
 
-    def visit_binaryOperation(self, binary):
+    def visit_binary_operation(self, binary):
         print('(', end='')
         binary.lhs.accept(self)
         print(' ', binary.op, end=' ', sep='')
         binary.rhs.accept(self)
         print(')', end='')
 
-    def visit_unaryOperation(self, unary):
+    def visit_unary_operation(self, unary):
         print('({}'.format(unary.op), end='')
         unary.expr.accept(self)
         print(')', end='')
@@ -54,13 +54,13 @@ class PrettyPrinter:
     def visit_read(self, read):
         print('read ', read.name, end='', sep='')
 
-    def visit_functionDefinition(self, defin):
+    def visit_function_definition(self, defin):
         print('def ', defin.name, end='', sep='')
         print('(', ', '.join(defin.function.args), ') {', sep='')
         self.print_indented(defin.function.body)
         print('    ' * self.tabs, '}', end='', sep='')
 
-    def visit_functionCall(self, call):
+    def visit_function_call(self, call):
         call.fun_expr.accept(self)
         print('(', end='')
         not_first = False
