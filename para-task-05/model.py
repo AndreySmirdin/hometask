@@ -2,7 +2,7 @@
 
 # Шаблон для домашнѣго задания
 # Рѣализуйте мѣтоды с raise NotImplementedError
-from yat.printer import *
+from jat.printer import *
 
 
 class Scope:
@@ -42,7 +42,7 @@ class Number:
         return self
 
     def visit(self, visitor):
-        return visitor.visitNumber(self)
+        return visitor.accept_number(self)
 
 
 class Function:
@@ -89,7 +89,7 @@ class FunctionDefinition:
         return self.function
 
     def visit(self, visitor):
-        return visitor.visitFunctionDefinition(self)
+        return visitor.accept_functionDefinition(self)
 
 
 class Conditional:
@@ -118,7 +118,7 @@ class Conditional:
             return Number(0)
 
     def visit(self, visitor):
-        return visitor.visitConditional(self)
+        return visitor.accept_conditional(self)
 
 
 class Print:
@@ -134,7 +134,7 @@ class Print:
         return res
 
     def visit(self, visitor):
-        return visitor.visitPrint(self)
+        return visitor.accept_print(self)
 
 
 class Read:
@@ -154,7 +154,7 @@ class Read:
         return Number(inp)
 
     def visit(self, visitor):
-        return visitor.visitRead(self)
+        return visitor.accept_read(self)
 
 
 class FunctionCall:
@@ -179,7 +179,7 @@ class FunctionCall:
         return function.evaluate(call_scope)
 
     def visit(self, visitor):
-        return visitor.visitFunctionCall(self)
+        return visitor.accept_functionCall(self)
 
 
 class Reference:
@@ -194,7 +194,7 @@ class Reference:
         return scope[self.name]
 
     def visit(self, visitor):
-        return visitor.visitReference(self)
+        return visitor.accept_reference(self)
 
 
 class BinaryOperation:
@@ -229,7 +229,7 @@ class BinaryOperation:
         return Number(self.operation[self.op](left, right))
 
     def visit(self, visitor):
-        return visitor.visitBinaryOperation(self)
+        return visitor.accept_binaryOperation(self)
 
 
 class UnaryOperation:
@@ -248,4 +248,4 @@ class UnaryOperation:
         return Number(self.operation[self.op](self.expr.evaluate(scope)))
 
     def visit(self, visitor):
-        return visitor.visitUnaryOperation(self)
+        return visitor.accept_unaryOperation(self)
