@@ -1,5 +1,5 @@
-from jat.model import *
-from jat.printer import *
+from yat.model import *
+from yat.printer import *
 
 
 class ConstantFolder:
@@ -24,8 +24,11 @@ class ConstantFolder:
         right = binary.rhs.accept(self)
         left = binary.lhs.accept(self)
         if binary.op == '*':
-            if isinstance(left, Number) or isinstance(right, Number):
-                if isinstance(left, Reference) or isinstance(right, Reference):
+            if isinstance(left, Number) and isinstance(right, Reference):
+                if left.value == 0:
+                    return Number(0)
+            if isinstance(left, Reference) and isinstance(right, Number):
+                if right.value == 0:
                     return Number(0)
         if isinstance(left, Number) and isinstance(right, Number):
             return BinaryOperation(left, binary.op, right).evaluate(None)
@@ -63,25 +66,26 @@ class ConstantFolder:
         new_fun_expr = call.fun_expr.accept(self)
         return FunctionCall(new_fun_expr, new_args)
 
-scope = Scope()
-scope['a'] = 239
-b1 = BinaryOperation(Reference('a'), '/', Number(2))
-b2 = BinaryOperation(Reference('a'), '-', Reference('a'))
-b3 = BinaryOperation(Number(4), '*', Number(2))
-b4 = BinaryOperation(Reference('a'), '*', Number(0))
-b5 = BinaryOperation(Number(0), '*', Reference('a'))
-b6 = BinaryOperation(
-    Number(4),
-    '*',
-    BinaryOperation(
-        Number(3),
-        '+',
-        Reference('a')))
-printer = PrettyPrinter()
-folder = ConstantFolder()
-printer.visit(folder.visit(b1))
-printer.visit(folder.visit(b2))
-printer.visit(folder.visit(b3))
-printer.visit(folder.visit(b4))
-printer.visit(folder.visit(b5))
-printer.visit(folder.visit(b6))
+if __name__ == '__main__':
+    scope = Scope()
+    scope['a'] = 239
+    b1 = BinaryOperation(Reference('a'), '/', Number(2))
+    b2 = BinaryOperation(Reference('a'), '-', Reference('a'))
+    b3 = BinaryOperation(Number(4), '*', Number(2))
+    b4 = BinaryOperation(Reference('a'), '*', Number(6))
+    b5 = BinaryOperation(Number(0), '*', Reference('a'))
+    b6 = BinaryOperation(
+        Number(4),
+        '*',
+        BinaryOperation(
+            Number(3),
+            '+',
+            Reference('a')))
+    printer = PrettyPrinter()
+    folder = ConstantFolder()
+    printer.visit(folder.visit(b1))
+    printer.visit(folder.visit(b2))
+    printer.visit(folder.visit(b3))
+    printer.visit(folder.visit(b4))
+    printer.visit(folder.visit(b5))
+    printer.visit(folder.visit(b6))
