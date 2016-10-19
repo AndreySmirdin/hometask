@@ -2,7 +2,6 @@
 
 # Шаблон для домашнѣго задания
 # Рѣализуйте мѣтоды с raise NotImplementedError
-from jat.printer import *
 
 
 class Scope:
@@ -41,8 +40,8 @@ class Number:
     def evaluate(self, scope):
         return self
 
-    def visit(self, visitor):
-        return visitor.accept_number(self)
+    def accept(self, visitor):
+        return visitor.visit_number(self)
 
 
 class Function:
@@ -88,8 +87,8 @@ class FunctionDefinition:
         scope[self.name] = self.function
         return self.function
 
-    def visit(self, visitor):
-        return visitor.accept_functionDefinition(self)
+    def accept(self, visitor):
+        return visitor.visit_functionDefinition(self)
 
 
 class Conditional:
@@ -117,8 +116,8 @@ class Conditional:
         else:
             return Number(0)
 
-    def visit(self, visitor):
-        return visitor.accept_conditional(self)
+    def accept(self, visitor):
+        return visitor.visit_conditional(self)
 
 
 class Print:
@@ -133,8 +132,8 @@ class Print:
         print(res.value)
         return res
 
-    def visit(self, visitor):
-        return visitor.accept_print(self)
+    def accept(self, visitor):
+        return visitor.visit_print(self)
 
 
 class Read:
@@ -153,8 +152,8 @@ class Read:
         scope[self.name] = Number(inp)
         return Number(inp)
 
-    def visit(self, visitor):
-        return visitor.accept_read(self)
+    def accept(self, visitor):
+        return visitor.visit_read(self)
 
 
 class FunctionCall:
@@ -178,8 +177,8 @@ class FunctionCall:
             call_scope[name] = arg.evaluate(scope)
         return function.evaluate(call_scope)
 
-    def visit(self, visitor):
-        return visitor.accept_functionCall(self)
+    def accept(self, visitor):
+        return visitor.visit_functionCall(self)
 
 
 class Reference:
@@ -193,8 +192,8 @@ class Reference:
     def evaluate(self, scope):
         return scope[self.name]
 
-    def visit(self, visitor):
-        return visitor.accept_reference(self)
+    def accept(self, visitor):
+        return visitor.visit_reference(self)
 
 
 class BinaryOperation:
@@ -228,8 +227,8 @@ class BinaryOperation:
         right = self.rhs.evaluate(scope)
         return Number(self.operation[self.op](left, right))
 
-    def visit(self, visitor):
-        return visitor.accept_binaryOperation(self)
+    def accept(self, visitor):
+        return visitor.visit_binaryOperation(self)
 
 
 class UnaryOperation:
@@ -247,5 +246,5 @@ class UnaryOperation:
     def evaluate(self, scope):
         return Number(self.operation[self.op](self.expr.evaluate(scope)))
 
-    def visit(self, visitor):
-        return visitor.accept_unaryOperation(self)
+    def accept(self, visitor):
+        return visitor.visit_unaryOperation(self)

@@ -1,44 +1,44 @@
-from jat.model import *
+from model import *
 
 
-class PrettyPrinter():
+class PrettyPrinter:
 
     def __init__(self):
         self.tabs = 0
 
     def visit(self, expr):
-        expr.visit(self)
+        expr.accept(self)
         print(';')
 
     def print_indented(self, exprs):
         self.tabs += 1
         for expr in exprs:
             print('    ' * self.tabs, end='')
-            expr.visit(self)
+            expr.accept(self)
             print(';')
         self.tabs -= 1
 
-    def accept_number(self, number):
+    def visit_number(self, number):
         print(number.value, end='')
 
-    def accept_reference(self, reference):
+    def visit_reference(self, reference):
         print(reference.name, end='')
 
-    def accept_binaryOperation(self, binary):
+    def visit_binaryOperation(self, binary):
         print('(', end='')
-        binary.lhs.visit(self)
+        binary.lhs.accept(self)
         print(' ', binary.op, end=' ', sep='')
-        binary.rhs.visit(self)
+        binary.rhs.accept(self)
         print(')', end='')
 
-    def accept_unaryOperation(self, unary):
+    def visit_unaryOperation(self, unary):
         print('({}'.format(unary.op), end='')
-        unary.expr.visit(self)
+        unary.expr.accept(self)
         print(')', end='')
 
-    def accept_conditional(self, cond):
+    def visit_conditional(self, cond):
         print('if (', end='')
-        cond.condition.visit(self)
+        cond.condition.accept(self)
         print(') {')
         if cond.if_true:
             self.print_indented(cond.if_true)
@@ -47,26 +47,26 @@ class PrettyPrinter():
             self.print_indented(cond.if_false)
         print('    ' * self.tabs, '}', end='', sep='')
 
-    def accept_print(self, Print):
+    def visit_print(self, Print):
         print('print ', end='')
-        Print.expr.visit(self)
+        Print.expr.accept(self)
 
-    def accept_read(self, read):
+    def visit_read(self, read):
         print('read ', read.name, end='', sep='')
 
-    def accept_functionDefinition(self, defin):
+    def visit_functionDefinition(self, defin):
         print('def ', defin.name, end='', sep='')
-        print ('(', ', '.join(defin.function.args), ') {', sep='')
+        print('(', ', '.join(defin.function.args), ') {', sep='')
         self.print_indented(defin.function.body)
         print('    ' * self.tabs, '}', end='', sep='')
 
-    def accept_functionCall(self, call):
-        call.fun_expr.visit(self)
+    def visit_functionCall(self, call):
+        call.fun_expr.accept(self)
         print('(', end='')
         not_first = False
         for expr in call.args:
             if not_first:
                 print(', ', end='')
-            expr.visit(self)
+            expr.accept(self)
             not_first = True
         print(')', end='')
