@@ -18,8 +18,8 @@ foldl' _ z [] = z
 foldl' f z (x:xs) = foldl' f (f z x) xs 
   
 
-concat' a [] = a
-concat' a (x:xs)  = concat' (x : a) xs 
+concat' [] a = a
+concat' (x:xs) a = x : (concat' xs a) 
 
 quicksort' [] = []
 quicksort' a = concat' (concat' (quicksort' (filter' (< head' a) a))  
