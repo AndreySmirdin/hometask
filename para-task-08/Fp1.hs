@@ -22,7 +22,7 @@ concat' [] a = a
 concat' (x:xs) a = x : (concat' xs a) 
 
 quicksort' [] = []
-quicksort' a = concat' (concat' (quicksort' (filter' (< head' a) a))  
-                                            (filter' (== head' a) a))  
-                                (quicksort' (filter' (> head' a) a))
+quicksort' (x:xs) = concat' (concat' (quicksort' (filter' (< x)  (x:xs)))  
+                                                 (filter' (== x) (x:xs)))  
+                                     (quicksort' (filter' (> x)  (x:xs)))
 
