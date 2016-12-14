@@ -1,8 +1,29 @@
-//
-// Created by andrey on 31.10.16.
-//
+#ifndef __THREAD_POOL_H__
+#define __THREAD_POOL_H__
 
-#ifndef PQSORT_THREAD_POOL_H
-#define PQSORT_THREAD_POOL_H
+#include <stdbool.h>
+#include <pthread.h>
+#include "wsqueue.h"
 
-#endif //PQSORT_THREAD_POOL_H
+struct Task {
+    struct list_node node;
+    void (*f)(void*);
+    void *arg;
+
+    pthread_mutex_t guard;
+    pthread_cond_t finished_cond;
+    bool finished;
+};
+
+struct ThreadPool {
+   unsigned threads_nm;
+   pthread_t *threads;
+   struct wsqueue tasks;
+};
+
+void thpool_init(struct ThreadPool *pool, unsigned threads_nm);
+void thpool_submit(struct ThreadPool *pool, struct Task *task);
+void thpool_wait(struct Task *task);
+void thpool_finit(struct ThreadPool *pool);
+
+#endif
