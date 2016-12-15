@@ -1,87 +1,153 @@
 from model import *
 import pytest
 import sys
-import io
+from io import BytesIO as StringIO
+
 
 def get_v(n):
-    sys.stdout = io.StringIO()
+    sys.stdout = StringIO()
     Print(n).evaluate(None)
-    return int(sys.stdout.getvalue(None))
+    res = int(sys.stdout.getvalue())
+    return res
+
+
+class TestPrint:
+
+    def test_print_number(self, monkeypatch):
+        monkeypatch.setattr(sys, "stdout", StringIO())
+        Print(Number(5)).evaluate(None)
+        assert sys.stdout.getvalue() == "5\n"
+
+    def test_print_reference(self, monkeypatch):
+        monkeypatch.setattr(sys, "stdout", StringIO())
+        scope = Scope()
+        scope["a"] = Number(5)
+        Print(Reference("a")).evaluate(scope)
+        assert sys.stdout.getvalue() == "5\n"
+
+
+class TestRead:
+
+    def test_read(self, monkeypatch):
+        scope = Scope()
+        monkeypatch.setattr(sys, "stdin", StringIO("239"))
+        Read("n").evaluate(scope)
+        assert get_v(Reference("n").evaluate(scope)) == 239
+
 
 class TestBinaryOperation:
 
     def test_sum(self):
-        assert(get_v(BinaryOperation(Number(7), "+", Number(3))) == 10)
-        
-    def test_difference(self): 
-        assert(BinaryOperation(Number(7), "-", Number(3)).evaluate(None).value == 4)
-        
+        assert get_v(BinaryOperation(Number(7),
+                                     "+",
+                                     Number(3)).evaluate(None)) == 10
+
+    def test_difference(self):
+        assert get_v(BinaryOperation(Number(7),
+                                     "-",
+                                     Number(3)).evaluate(None)) == 4
+
     def test_multiplication(self):
-        assert(BinaryOperation(Number(7), "*", Number(3)).evaluate(None).value == 21)
-        
+        assert get_v(BinaryOperation(Number(7),
+                                     "*",
+                                     Number(3)).evaluate(None)) == 21
+
     def test_division(self):
-        assert(BinaryOperation(Number(7), "/", Number(3)).evaluate(None).value == 2)
-        
+        assert get_v(BinaryOperation(Number(7),
+                                     "/",
+                                     Number(3)).evaluate(None)) == 2
+
     def test_mod(self):
-        assert(BinaryOperation(Number(7), "%", Number(3)).evaluate(None).value == 1)
-        
+        assert get_v(BinaryOperation(Number(7),
+                                     "%",
+                                     Number(3)).evaluate(None)) == 1
+
     def test_equal(self):
-        assert(BinaryOperation(Number(7), "==", Number(3)).evaluate(None).value == 0)
-        
+        assert get_v(BinaryOperation(Number(7),
+                                     "==",
+                                     Number(3)).evaluate(None)) == 0
+
     def test_not_equal(self):
-        assert(BinaryOperation(Number(7), "!=", Number(3)).evaluate(None).value == 1)
-        
+        assert get_v(BinaryOperation(Number(7),
+                                     "!=",
+                                     Number(3)).evaluate(None)) == 1
+
     def test_less(self):
-        assert(BinaryOperation(Number(7), "<", Number(3)).evaluate(None).value == 0)
-        
+        assert get_v(BinaryOperation(Number(7),
+                                     "<",
+                                     Number(3)).evaluate(None)) == 0
+
     def test_more(self):
-        assert(BinaryOperation(Number(7), ">", Number(3)).evaluate(None).value == 1)
-        
+        assert get_v(BinaryOperation(Number(7),
+                                     ">",
+                                     Number(3)).evaluate(None)) == 1
+
     def test_less_or_equal(self):
-        assert(BinaryOperation(Number(7), "<=", Number(3)).evaluate(None).value == 0)
-        
+        assert get_v(BinaryOperation(Number(7),
+                                     "<=",
+                                     Number(3)).evaluate(None)) == 0
+
     def test_more_or_equal(self):
-        assert(BinaryOperation(Number(7), ">=", Number(7)).evaluate(None).value == 1)
-        
+        assert get_v(BinaryOperation(Number(7),
+                                     ">=",
+                                     Number(7)).evaluate(None)) == 1
+
     def test_and(self):
-        assert(BinaryOperation(Number(7), "&&", Number(0)).evaluate(None).value == 0)
-        
+        assert get_v(BinaryOperation(Number(7),
+                                     "&&",
+                                     Number(0)).evaluate(None)) == 0
+
     def test_or(self):
-        assert(BinaryOperation(Number(1), "||", Number(7)).evaluate(None).value == 1)
-        
-        
+        assert get_v(BinaryOperation(Number(1),
+                                     "||",
+                                     Number(7)).evaluate(None)) == 1
+
+
 class TestUnaryOperation:
 
     def test_minus(self):
-        assert(UnaryOperation("-", Number(5)).evaluate(None).value == -5)
-        
+        assert get_v(UnaryOperation("-", Number(5)).evaluate(None)) == -5
+
     def test_not(self):
-        assert(UnaryOperation("!", Number(5)).evaluate(None).value == 0)
-        
-        
+        assert get_v(UnaryOperation("!", Number(5)).evaluate(None)) == 0
+
+
 class TestConditional:
 
-    def test_cond1(self):
+    def test_cond_is_true(self):
         ans = Conditional(BinaryOperation(Number(3), ">", Number(0)),
-                  [Number(1)],
-                  [])
-        assert(ans.evaluate(None).value == 1)
-        
-    def test_cond2(self):
+                          [Number(1)],
+                          [])
+        assert get_v(ans.evaluate(None)) == 1
+
+    def test_cond_is_false(self):
         ans = Conditional(BinaryOperation(Number(3), "*", Number(0)),
-                  [],
-                  [Number(2)])
-        assert(ans.evaluate(None).value == 2)
-        
-    def test_cond3(self):
+                          [],
+                          [Number(2)])
+        assert get_v(ans.evaluate(None)) == 2
+
+    def test_list_of_operations(self):
         ans = Conditional(BinaryOperation(Number(3), "*", Number(0)),
-                  [],
-                  [BinaryOperation(UnaryOperation("-", Number(2)), "+", BinaryOperation(Number(3), "*", Number(-7)))])
-        assert(ans.evaluate(None).value == -23)
-        
-    def test_cond4(self):
+                          [],
+                          [BinaryOperation(UnaryOperation("-", Number(2)), "+",
+                           BinaryOperation(Number(3), "*", Number(-7)))])
+        assert get_v(ans.evaluate(None)) == -23
+
+    def test_none_true(self):
+        ans = Conditional(Number(1), None, None)
+        ans.evaluate(None)
+
+    def test_none_false(self):
         ans = Conditional(Number(0), None, None)
-        assert(ans.evaluate(None).value == 0)
+        ans.evaluate(None)
+
+    def test_empty_true(self):
+        ans = Conditional(Number(1), [], [])
+        ans.evaluate(None)
+
+    def test_empty_false(self):
+        ans = Conditional(Number(0), [], [])
+        ans.evaluate(None)
 
 
 class TestReference:
@@ -90,9 +156,11 @@ class TestReference:
         scope = Scope()
         scope["a"] = Number(10)
         scope["b"] = Number(20)
-        assert(BinaryOperation(Reference("a"), "+", Reference("b")).evaluate(scope).value == 30)
-        
-        
+        assert get_v(BinaryOperation(Reference("a"),
+                                     "+",
+                                     Reference("b")).evaluate(scope)) == 30
+
+
 class TestScope:
 
     def test_scope(self):
@@ -101,22 +169,27 @@ class TestScope:
         parent["a"] = Number(30)
         parent["b"] = Number(50)
         child["b"] = Number(5)
-        assert(BinaryOperation(Reference("a"), "+", Reference("b")).evaluate(child).value == 35)
-        
-        
+        assert get_v(BinaryOperation(Reference("a"),
+                                     "+",
+                                     Reference("b")).evaluate(child)) == 35
+
+
 class TestFuction:
 
-    def test_function(self):
+    def test_function_usual(self):
         scope = Scope()
         scope["n"] = Number(6)
         cond = Conditional(BinaryOperation(Reference("a"), ">", Number(1)), [
                            FunctionCall(Reference("f"), [
-                              BinaryOperation(Reference("a"), "-", Number(1))])], [
+                               BinaryOperation(Reference("a"),
+                                               "-",
+                                               Number(1))])], [
                            Number(1)])
         func = Function("a", [BinaryOperation(cond, "*", Reference("a"))])
-        defin = FunctionDefinition("f", func)
-        assert FunctionCall(defin, [Reference("n")]).evaluate(scope).value == 720
-        
-        
+        d = FunctionDefinition("f", func)
+        assert get_v(FunctionCall(d, [Reference("n")]).evaluate(scope)) == 720
 
-
+    def test_function_empty(self):
+        scope = Scope()
+        defin = FunctionDefinition('name', Function(['n'], []))
+        FunctionCall(defin, [Number(5)]).evaluate(scope)

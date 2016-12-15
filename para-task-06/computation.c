@@ -14,7 +14,7 @@ void thpool_submit_computation(struct ThreadPool *pool,
 	computation->task->guard = computation->guard;
 	computation->on_complete = on_complete;
 	computation->on_complete_arg = on_complete_arg;
-	thpool_submit(pool, &(computation->task));
+	thpool_submit(pool, (computation->task));
 }
 
 
