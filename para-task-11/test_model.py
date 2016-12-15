@@ -1,7 +1,7 @@
 from model import *
 import pytest
 import sys
-from io import BytesIO as StringIO
+from io import StringIO
 
 
 def get_v(n):
