@@ -115,19 +115,19 @@ class TestUnaryOperation:
 class TestConditional:
 
     def test_cond_is_true(self):
-        ans = Conditional(BinaryOperation(Number(3), ">", Number(0)),
+        ans = Conditional(Number(1),
                           [Number(1)],
                           [])
         assert get_v(ans.evaluate(None)) == 1
 
     def test_cond_is_false(self):
-        ans = Conditional(BinaryOperation(Number(3), "*", Number(0)),
+        ans = Conditional(Number(0),
                           [],
                           [Number(2)])
         assert get_v(ans.evaluate(None)) == 2
 
     def test_list_of_operations(self):
-        ans = Conditional(BinaryOperation(Number(3), "*", Number(0)),
+        ans = Conditional(Number(0),
                           [],
                           [BinaryOperation(UnaryOperation("-", Number(2)), "+",
                            BinaryOperation(Number(3), "*", Number(-7)))])
@@ -155,10 +155,7 @@ class TestReference:
     def test_reference(self):
         scope = Scope()
         scope["a"] = Number(10)
-        scope["b"] = Number(20)
-        assert get_v(BinaryOperation(Reference("a"),
-                                     "+",
-                                     Reference("b")).evaluate(scope)) == 30
+        assert get_v(Reference("a").evaluate(scope)) == 10
 
 
 class TestScope:
@@ -169,25 +166,20 @@ class TestScope:
         parent["a"] = Number(30)
         parent["b"] = Number(50)
         child["b"] = Number(5)
-        assert get_v(BinaryOperation(Reference("a"),
-                                     "+",
-                                     Reference("b")).evaluate(child)) == 35
+        assert get_v(Reference("a").evaluate(child)) == 30
+        assert get_v(Reference("b").evaluate(child)) == 5
 
 
 class TestFuction:
 
-    def test_function_usual(self):
+    def test_function_simple(self):
         scope = Scope()
-        scope["n"] = Number(6)
-        cond = Conditional(BinaryOperation(Reference("a"), ">", Number(1)), [
-                           FunctionCall(Reference("f"), [
-                               BinaryOperation(Reference("a"),
-                                               "-",
-                                               Number(1))])], [
-                           Number(1)])
-        func = Function("a", [BinaryOperation(cond, "*", Reference("a"))])
+        func = Function(["a", "b"], [BinaryOperation(Reference("a"), 
+                                                     "*",
+                                                     Reference("b"))])
         d = FunctionDefinition("f", func)
-        assert get_v(FunctionCall(d, [Reference("n")]).evaluate(scope)) == 720
+        call = FunctionCall(d, [Number(2), Number(3)]).evaluate(scope)
+        assert get_v(call) == 6
 
     def test_function_empty(self):
         scope = Scope()

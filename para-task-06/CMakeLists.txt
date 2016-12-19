@@ -16,7 +16,7 @@ set(SOURCE_FILES
     squeue.c
     squeue.h
     thread_pool.c
-    thread_pool.h
+    thread_pool.h mergesort.c mergesort.h
     wsqueue.c
     wsqueue.h)
 

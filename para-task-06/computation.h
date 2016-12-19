@@ -14,7 +14,7 @@ struct Computation {
     pthread_cond_t finished_cond;
     bool finished;
     struct Task *task;
-    OnComputationComplete *on_complete;
+    OnComputationComplete on_complete;
     void* on_complete_arg;
     // Любые поля на ваше усмотрение.
 };
