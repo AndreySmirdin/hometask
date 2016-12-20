@@ -95,14 +95,14 @@ class TestBinaryOperation:
                                      Number(7)).evaluate(None)) == 1
 
     def test_and(self):
-        assert bool(get_v(BinaryOperation(Number(7),
-                                         "&&",
-                                          Number(0)).evaluate(None))) == False
+        assert ! bool(get_v(BinaryOperation(Number(7),
+                                            "&&",
+                                            Number(0)).evaluate(None)))
 
     def test_or(self):
         assert bool(get_v(BinaryOperation(Number(1),
-                                     "||",
-                                     Number(7)).evaluate(None))) == True
+                                          "||",
+                                          Number(7)).evaluate(None)))
 
 
 class TestUnaryOperation:
@@ -175,7 +175,7 @@ class TestFunction:
 
     def test_function_simple(self):
         scope = Scope()
-        func = Function(["a", "b"], [BinaryOperation(Reference("a"), 
+        func = Function(["a", "b"], [BinaryOperation(Reference("a"),
                                                      "*",
                                                      Reference("b"))])
         d = FunctionDefinition("f", func)
