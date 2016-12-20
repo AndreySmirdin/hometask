@@ -5,9 +5,11 @@ from io import StringIO
 
 
 def get_v(n):
+    old = sys.stdout
     sys.stdout = StringIO()
     Print(n).evaluate(None)
     res = int(sys.stdout.getvalue())
+    sys.stdout = old
     return res
 
 
@@ -93,14 +95,14 @@ class TestBinaryOperation:
                                      Number(7)).evaluate(None)) == 1
 
     def test_and(self):
-        assert get_v(BinaryOperation(Number(7),
-                                     "&&",
-                                     Number(0)).evaluate(None)) == 0
+        assert bool(get_v(BinaryOperation(Number(7),
+                                         "&&",
+                                          Number(0)).evaluate(None))) == False
 
     def test_or(self):
-        assert get_v(BinaryOperation(Number(1),
+        assert bool(get_v(BinaryOperation(Number(1),
                                      "||",
-                                     Number(7)).evaluate(None)) == 1
+                                     Number(7)).evaluate(None))) == True
 
 
 class TestUnaryOperation:
@@ -129,9 +131,8 @@ class TestConditional:
     def test_list_of_operations(self):
         ans = Conditional(Number(0),
                           [],
-                          [BinaryOperation(UnaryOperation("-", Number(2)), "+",
-                           BinaryOperation(Number(3), "*", Number(-7)))])
-        assert get_v(ans.evaluate(None)) == -23
+                          [Number(1), Number(2), Number(3)])
+        assert get_v(ans.evaluate(None)) == 3
 
     def test_none_true(self):
         ans = Conditional(Number(1), None, None)
@@ -170,7 +171,7 @@ class TestScope:
         assert get_v(Reference("b").evaluate(child)) == 5
 
 
-class TestFuction:
+class TestFunction:
 
     def test_function_simple(self):
         scope = Scope()

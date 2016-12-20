@@ -11,6 +11,7 @@ void thpool_submit_computation(struct ThreadPool *pool,
 
 	computation->task->f = (void*) computation->f;
 	computation->task->arg = computation->arg;
+    computation->finished = false;
 
     pthread_mutex_init(&computation->guard, NULL);
     pthread_cond_init(&computation->finished_cond, NULL);
@@ -31,7 +32,8 @@ void thpool_wait_computation(struct Computation *computation){
 
     pthread_cond_destroy(&computation->finished_cond);
     pthread_mutex_destroy(&computation->guard);
-    //free(computation->task);
+
+    free(computation->task);
 }
 
 

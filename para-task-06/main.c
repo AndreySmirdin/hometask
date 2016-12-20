@@ -21,12 +21,11 @@ void foo2(void* arg){
 	printf("foo2 \n");
 	
 	thpool_complete_computation(&c2);
-	thpool_wait_computation(&c2);
+
 }
 
 void foo1(void* arg) {
 	printf("foo1 \n");
-	c2.finished = false;
 	c2.f = foo2;
 	c2.arg = NULL;
 	thpool_submit_computation(&pool, &c2, foo2_complete, NULL);
@@ -37,12 +36,12 @@ void foo1(void* arg) {
 
 int main(){
 	printf("lets start \n");
-    thpool_init(&pool, 1);
-	c1.finished = false;
+    thpool_init(&pool, 2);
 	c1.f = foo1;
 	c1.arg = NULL;
 	thpool_submit_computation(&pool, &c1, foo1_complete, NULL);
 	thpool_wait_computation(&c1);
+	thpool_finit(&pool);
     return 0;
 }
 
