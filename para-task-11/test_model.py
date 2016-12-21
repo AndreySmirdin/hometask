@@ -95,9 +95,9 @@ class TestBinaryOperation:
                                      Number(7)).evaluate(None)) == 1
 
     def test_and(self):
-        assert ! bool(get_v(BinaryOperation(Number(7),
-                                            "&&",
-                                            Number(0)).evaluate(None)))
+        assert not bool(get_v(BinaryOperation(Number(7),
+                                              "&&",
+                                              Number(0)).evaluate(None)))
 
     def test_or(self):
         assert bool(get_v(BinaryOperation(Number(1),
