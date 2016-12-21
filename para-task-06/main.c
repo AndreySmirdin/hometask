@@ -19,7 +19,6 @@ void foo2_complete(void* arg) {
 
 void foo2(void* arg){
 	printf("foo2 \n");
-	
 	thpool_complete_computation(&c2);
 
 }

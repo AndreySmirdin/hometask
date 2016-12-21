@@ -65,34 +65,34 @@ class TestBinaryOperation:
                                      Number(3)).evaluate(None)) == 1
 
     def test_equal(self):
-        assert get_v(BinaryOperation(Number(7),
-                                     "==",
-                                     Number(3)).evaluate(None)) == 0
+        assert not bool(get_v(BinaryOperation(Number(7),
+                                              "==",
+                                              Number(3)).evaluate(None)))
 
     def test_not_equal(self):
-        assert get_v(BinaryOperation(Number(7),
-                                     "!=",
-                                     Number(3)).evaluate(None)) == 1
+        assert bool(get_v(BinaryOperation(Number(7),
+                                          "!=",
+                                          Number(3)).evaluate(None)))
 
     def test_less(self):
-        assert get_v(BinaryOperation(Number(7),
-                                     "<",
-                                     Number(3)).evaluate(None)) == 0
+        assert not bool(get_v(BinaryOperation(Number(7),
+                                              "<",
+                                              Number(3)).evaluate(None)))
 
     def test_more(self):
-        assert get_v(BinaryOperation(Number(7),
-                                     ">",
-                                     Number(3)).evaluate(None)) == 1
+        assert bool(get_v(BinaryOperation(Number(7),
+                                          ">",
+                                          Number(3)).evaluate(None)))
 
     def test_less_or_equal(self):
-        assert get_v(BinaryOperation(Number(7),
-                                     "<=",
-                                     Number(3)).evaluate(None)) == 0
+        assert not bool(get_v(BinaryOperation(Number(7),
+                                              "<=",
+                                              Number(3)).evaluate(None)))
 
     def test_more_or_equal(self):
-        assert get_v(BinaryOperation(Number(7),
-                                     ">=",
-                                     Number(7)).evaluate(None)) == 1
+        assert bool(get_v(BinaryOperation(Number(7),
+                                          ">=",
+                                          Number(7)).evaluate(None)))
 
     def test_and(self):
         assert not bool(get_v(BinaryOperation(Number(7),

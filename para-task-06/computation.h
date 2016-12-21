@@ -7,13 +7,13 @@
 typedef void (*OnComputationComplete)(void*);
 
 struct Computation {
-    void* (*f)(void*);
+    void (*f)(void*);
     void* arg;
     
     pthread_mutex_t guard;
     pthread_cond_t finished_cond;
     bool finished;
-    struct Task *task;
+    struct Task task;
     OnComputationComplete on_complete;
     void* on_complete_arg;
     // Любые поля на ваше усмотрение.
